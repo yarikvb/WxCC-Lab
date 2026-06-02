@@ -59,12 +59,52 @@
         height: auto;
       }
 
+      .crosslaunch-panel {
+        position: fixed;
+        left: 1rem;
+        top: 7rem;
+        z-index: 10;
+      }
+
+      .crosslaunch-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        background-color: #e87722;
+        color: #ffffff;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+
+      .crosslaunch-button:hover,
+      .crosslaunch-button:focus {
+        background-color: #c65f17;
+        transform: translateY(-1px);
+      }
+
+      .crosslaunch-button:focus {
+        outline: 3px solid rgba(232, 119, 34, 0.35);
+        outline-offset: 3px;
+      }
+
       footer {
         background-color: #f5f5f5;
         text-align: center;
         padding: 1rem;
         font-size: 0.9rem;
         color: #777;
+      }
+
+      @media (max-width: 1040px) {
+        .crosslaunch-panel {
+          position: static;
+          margin: 1rem 2rem 0;
+        }
       }
     </style>
   </head>
@@ -73,6 +113,10 @@
       <img src="pic/black_cat.png" alt="Surf Shack Logo" />
       <div>Technical Training Excellence</div>
     </header>
+
+    <nav class="crosslaunch-panel" aria-label="Page shortcuts">
+      <a class="crosslaunch-button" href="calculator.html">Launch Calculator</a>
+    </nav>
 
     <main>
       <h1>Welcome to Webex CC Chat</h1>

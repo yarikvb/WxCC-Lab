@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Standard Calculator</title>
+    <link rel="icon" href="https://www.sunsetlearning.com/wp-content/uploads/2017/06/favicon.png" />
+
+    <style>
+      :root {
+        --brand-blue: #00457c;
+        --brand-orange: #e87722;
+        --page-bg: #f3f6f8;
+        --panel-bg: #ffffff;
+        --button-bg: #eef2f5;
+        --button-hover: #dce5eb;
+        --text: #263238;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--page-bg);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      header {
+        background-color: var(--brand-blue);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      header img {
+        height: 50px;
+      }
+
+      .home-link {
+        color: #ffffff;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .home-link:hover,
+      .home-link:focus {
+        text-decoration: underline;
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        padding: 3rem 1rem;
+      }
+
+      .calculator {
+        width: min(100%, 360px);
+        border-radius: 8px;
+        background-color: var(--panel-bg);
+        box-shadow: 0 12px 32px rgba(0, 69, 124, 0.18);
+        padding: 1rem;
+      }
+
+      .display {
+        min-height: 86px;
+        border-radius: 6px;
+        background-color: #102c44;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .history {
+        min-height: 1.2rem;
+        color: #b8c8d5;
+        font-size: 0.9rem;
+        word-break: break-all;
+      }
+
+      .result {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        text-align: right;
+        padding: 0;
+      }
+
+      .keys {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.6rem;
+      }
+
+      button {
+        min-height: 58px;
+        border: 0;
+        border-radius: 6px;
+        background-color: var(--button-bg);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-size: 1.1rem;
+        font-weight: 700;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+
+      button:hover,
+      button:focus {
+        background-color: var(--button-hover);
+        transform: translateY(-1px);
+      }
+
+      button:focus {
+        outline: 3px solid rgba(0, 69, 124, 0.2);
+        outline-offset: 2px;
+      }
+
+      .operator,
+      .equals {
+        background-color: var(--brand-orange);
+        color: #ffffff;
+      }
+
+      .operator:hover,
+      .operator:focus,
+      .equals:hover,
+      .equals:focus {
+        background-color: #c65f17;
+      }
+
+      .utility {
+        background-color: #d8e8f2;
+        color: var(--brand-blue);
+      }
+
+      .zero {
+        grid-column: span 2;
+      }
+
+      footer {
+        color: #60717c;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="pic/black_cat.png" alt="Surf Shack Logo" />
+      <a class="home-link" href="index.html">Back to Home</a>
+    </header>
+
+    <main>
+      <section class="calculator" aria-label="Standard calculator">
+        <div class="display">
+          <div class="history" id="history" aria-live="polite"></div>
+          <input class="result" id="display" type="text" value="0" aria-label="Calculator display" readonly />
+        </div>
+
+        <div class="keys">
+          <button class="utility" type="button" data-action="clear">AC</button>
+          <button class="utility" type="button" data-action="backspace">DEL</button>
+          <button class="utility" type="button" data-action="percent">%</button>
+          <button class="operator" type="button" data-operation="divide">/</button>
+
+          <button type="button" data-number="7">7</button>
+          <button type="button" data-number="8">8</button>
+          <button type="button" data-number="9">9</button>
+          <button class="operator" type="button" data-operation="multiply">*</button>
+
+          <button type="button" data-number="4">4</button>
+          <button type="button" data-number="5">5</button>
+          <button type="button" data-number="6">6</button>
+          <button class="operator" type="button" data-operation="subtract">-</button>
+
+          <button type="button" data-number="1">1</button>
+          <button type="button" data-number="2">2</button>
+          <button type="button" data-number="3">3</button>
+          <button class="operator" type="button" data-operation="add">+</button>
+
+          <button class="zero" type="button" data-number="0">0</button>
+          <button type="button" data-action="decimal">.</button>
+          <button class="equals" type="button" data-action="equals">=</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      &copy; Sunset Learning Institute
+    </footer>
+
+    <script>
+      const display = document.getElementById("display");
+      const history = document.getElementById("history");
+      const keys = document.querySelector(".keys");
+
+      let currentValue = "0";
+      let storedValue = null;
+      let activeOperation = null;
+      let shouldResetDisplay = false;
+
+      const operationSymbols = {
+        add: "+",
+        subtract: "-",
+        multiply: "*",
+        divide: "/",
+      };
+
+      function formatNumber(value) {
+        if (!Number.isFinite(value)) {
+          return "Error";
+        }
+
+        const rounded = Number.parseFloat(value.toPrecision(12));
+        return rounded.toString();
+      }
+
+      function updateDisplay() {
+        display.value = currentValue;
+        history.textContent = storedValue === null || activeOperation === null
+          ? ""
+          : `${storedValue} ${operationSymbols[activeOperation]}`;
+      }
+
+      function inputNumber(number) {
+        if (currentValue === "Error" || shouldResetDisplay) {
+          currentValue = number;
+          shouldResetDisplay = false;
+        } else if (currentValue === "0") {
+          currentValue = number;
+        } else {
+          currentValue += number;
+        }
+
+        updateDisplay();
+      }
+
+      function inputDecimal() {
+        if (currentValue === "Error" || shouldResetDisplay) {
+          currentValue = "0.";
+          shouldResetDisplay = false;
+        } else if (!currentValue.includes(".")) {
+          currentValue += ".";
+        }
+
+        updateDisplay();
+      }
+
+      function calculate(first, second, operation) {
+        switch (operation) {
+          case "add":
+            return first + second;
+          case "subtract":
+            return first - second;
+          case "multiply":
+            return first * second;
+          case "divide":
+            return second === 0 ? NaN : first / second;
+          default:
+            return second;
+        }
+      }
+
+      function chooseOperation(operation) {
+        if (currentValue === "Error") {
+          clearCalculator();
+          return;
+        }
+
+        const numericValue = Number(currentValue);
+
+        if (storedValue !== null && activeOperation !== null && !shouldResetDisplay) {
+          const result = calculate(Number(storedValue), numericValue, activeOperation);
+          currentValue = formatNumber(result);
+          storedValue = currentValue === "Error" ? null : currentValue;
+        } else {
+          storedValue = currentValue;
+        }
+
+        activeOperation = operation;
+        shouldResetDisplay = true;
+        updateDisplay();
+      }
+
+      function runEquals() {
+        if (storedValue === null || activeOperation === null || currentValue === "Error") {
+          return;
+        }
+
+        const result = calculate(Number(storedValue), Number(currentValue), activeOperation);
+        currentValue = formatNumber(result);
+        storedValue = null;
+        activeOperation = null;
+        shouldResetDisplay = true;
+        updateDisplay();
+      }
+
+      function clearCalculator() {
+        currentValue = "0";
+        storedValue = null;
+        activeOperation = null;
+        shouldResetDisplay = false;
+        updateDisplay();
+      }
+
+      function backspace() {
+        if (currentValue === "Error" || shouldResetDisplay || currentValue.length === 1) {
+          currentValue = "0";
+        } else {
+          currentValue = currentValue.slice(0, -1);
+        }
+
+        updateDisplay();
+      }
+
+      function percent() {
+        if (currentValue !== "Error") {
+          currentValue = formatNumber(Number(currentValue) / 100);
+        }
+
+        updateDisplay();
+      }
+
+      keys.addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+
+        if (!button) {
+          return;
+        }
+
+        if (button.dataset.number) {
+          inputNumber(button.dataset.number);
+          return;
+        }
+
+        if (button.dataset.operation) {
+          chooseOperation(button.dataset.operation);
+          return;
+        }
+
+        switch (button.dataset.action) {
+          case "clear":
+            clearCalculator();
+            break;
+          case "backspace":
+            backspace();
+            break;
+          case "percent":
+            percent();
+            break;
+          case "decimal":
+            inputDecimal();
+            break;
+          case "equals":
+            runEquals();
+            break;
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        const key = event.key;
+
+        if (/^[0-9]$/.test(key)) {
+          inputNumber(key);
+        } else if (key === ".") {
+          inputDecimal();
+        } else if (key === "+") {
+          chooseOperation("add");
+        } else if (key === "-") {
+          chooseOperation("subtract");
+        } else if (key === "*") {
+          chooseOperation("multiply");
+        } else if (key === "/") {
+          event.preventDefault();
+          chooseOperation("divide");
+        } else if (key === "Enter" || key === "=") {
+          runEquals();
+        } else if (key === "Backspace") {
+          backspace();
+        } else if (key === "Escape") {
+          clearCalculator();
+        }
+      });
+    </script>
+  </body>
+</html>
